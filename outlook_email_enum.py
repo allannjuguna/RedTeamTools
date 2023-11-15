@@ -29,6 +29,10 @@ parser.add_argument('-t','--threads',help='Number of threads to use ',required=F
 args=parser.parse_args()
 
 
+def debug(string):
+	if args.verbose == True:
+		print(string)
+
 def reademails(filename):
 	try:
 		with open(filename,'r',encoding="latin-1") as r:
@@ -36,8 +40,16 @@ def reademails(filename):
 			r.close()
 		return emails
 	except Exception as e:
-		print(f"{fail} Unable to read file '{args.file}'. Error {e}")
-		exit()
+		try:
+			# debug(f"{progress} Trying to read emails from stdin")
+			import sys
+			emails = sys.stdin.read().split('\n')
+			return emails
+		except:
+			print(f"{fail} Unable to read file '{args.file}'. Error {e}")
+			exit()
+
+
 
 
 def banner():
@@ -81,10 +93,6 @@ headers = {
 
 params = {'mkt': 'en-US'}
 
-
-def debug(string):
-	if args.verbose == True:
-		print(string)
 
 def checkemail(email):
 	json_data = {

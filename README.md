@@ -7,7 +7,7 @@ Collection of offensive security tools and scripts I have built :)
 
 
 ### Outlook Email Enumerator
-* This scripts enumerates valid emails from a list or provided emails. Below is the command line help menu showing the syntax
+* This script enumerates valid emails from a list or provided emails. Below is the command line help menu showing the syntax
 ```sh
  $ outlook_email_enum.py -h
 usage: outlook_email_enum.py [-h] -f FILE [-v] [-s] [-t THREADS]
