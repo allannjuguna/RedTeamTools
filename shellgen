@@ -46,7 +46,7 @@ if not (args.ip):
 
 
 if args.debug == True:
-	print(f'Running the script in debug mode')
+	print(f'Running the script with debug messages ')
 
 
 def debug(command):
