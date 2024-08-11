@@ -13,7 +13,8 @@ dockerkali () {
 	echo sudo ls "$FOLDER/root" | grep --color=auto -q 'root' && echo '[+] Mounted successfully' || (
 		echo '[-] Mount failed. Proceeding anyway'
 	)
-	docker run -it -v "$FOLDER":/mnt -w /root --user root "$CONTAINER" chroot /mnt /bin/bash
+	cd "$FOLDER"
+	docker run -it -v `pwd`:/mnt -w /root --user root "$CONTAINER" chroot /mnt /bin/bash
 }
 
 
